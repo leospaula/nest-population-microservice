@@ -25,8 +25,15 @@ export class PopulationController {
 
   @MessagePattern('get-population')
   async getPopulation(@Payload() data: any, @Ctx() context: NatsContext) {
-    const state = await lastValueFrom(this.client.send('get-states', { uf: data.uf }))
-    const population = await this.populationService.getPopulationData(state.code)
+    let stateCode = null
+    if (data.code) {
+      stateCode = data.code
+    } else {
+      const state = await lastValueFrom(this.client.send('get-states', { uf: data.uf }))
+      stateCode = state.code
+    }
+    
+    const population = await this.populationService.getPopulationData(stateCode)
     return { uf: data.uf.toUpperCase(), populacao: population };
   }
 }
