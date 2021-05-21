@@ -5,22 +5,18 @@ import {
   Ctx,
   NatsContext,
   ClientProxy, 
-  Client, 
-  Transport
+  Client
 } from '@nestjs/microservices';
 import { PopulationService } from './population.service';
 import { lastValueFrom } from 'rxjs';
+import { natsConfig } from './nats.config';
 
 @Controller()
 export class PopulationController {
   constructor(private readonly populationService: PopulationService) {}
 
-  @Client({
-    transport: Transport.NATS,
-    options: {
-      url: 'nats://localhost:4222',
-    },
-  })
+  @Client(natsConfig)
+
   client: ClientProxy;
 
   @MessagePattern('get-population')
